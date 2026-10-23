@@ -1,0 +1,20 @@
+{
+  "name": "memrel-monorepo",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "vp run @mvd/memrel-playground#dev",
+    "check": "vp check",
+    "test": "vp run -r test",
+    "build": "vp run -r build",
+    "bench": "vp run -r bench",
+    "ready": "vp check && vp run -r test && vp run -r build"
+  },
+  "devDependencies": {
+    "vite-plus": "catalog:"
+  },
+  "engines": {
+    "node": ">=22.18.0"
+  },
+  "packageManager": "pnpm@10.28.0"
+}
