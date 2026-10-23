@@ -1,4 +1,4 @@
-import { describe, expect, test } from 'vitest';
+import { describe, expect, test } from 'vite-plus/test';
 import { displayKey, encodeFields, encodeValue } from '../src/encode.ts';
 import { createDb } from '../src/index.ts';
 

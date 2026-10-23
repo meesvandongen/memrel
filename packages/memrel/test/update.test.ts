@@ -1,4 +1,4 @@
-import { describe, expect, test } from 'vitest';
+import { describe, expect, test } from 'vite-plus/test';
 import { createDb, MemrelError } from '../src/index.ts';
 import { seededDb } from './schema.ts';
 

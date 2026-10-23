@@ -1,4 +1,4 @@
-import { describe, expectTypeOf, test } from 'vitest';
+import { describe, expectTypeOf, test } from 'vite-plus/test';
 import { createDb, type DeleteResult } from '../src/index.ts';
 import { makeDb, type OrgUser, type OrgUserPermission, type Post, type User } from './schema.ts';
 

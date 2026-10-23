@@ -1,65 +1,19 @@
 {
-  "name": "@mvd/memrel",
-  "version": "0.1.0",
-  "description": "A small, synchronous, in-memory relational store for typed mock data: composite keys, foreign keys, cascades, transactions and snapshots.",
-  "keywords": [
-    "in-memory",
-    "database",
-    "relational",
-    "mock",
-    "fixtures",
-    "foreign-key",
-    "typescript",
-    "msw",
-    "testing"
-  ],
-  "license": "MIT",
-  "author": "Mees van Dongen",
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/meesvandongen/memrel.git"
-  },
-  "homepage": "https://github.com/meesvandongen/memrel#readme",
-  "bugs": "https://github.com/meesvandongen/memrel/issues",
+  "name": "memrel-monorepo",
+  "private": true,
   "type": "module",
-  "sideEffects": false,
-  "exports": {
-    ".": "./dist/index.js",
-    "./package.json": "./package.json"
-  },
-  "main": "./dist/index.js",
-  "module": "./dist/index.js",
-  "types": "./dist/index.d.ts",
-  "files": [
-    "dist"
-  ],
-  "engines": {
-    "node": ">=20"
-  },
   "scripts": {
-    "build": "tsdown",
-    "dev": "tsdown --watch",
-    "test": "vitest",
-    "test:run": "vitest run",
-    "coverage": "vitest run --coverage",
-    "bench": "node --experimental-strip-types --no-warnings bench/memrel.bench.ts",
-    "typecheck": "tsc --noEmit && tsc --noEmit -p tsconfig.build.json",
-    "lint": "biome check .",
-    "format": "biome check --write .",
-    "prepublishOnly": "pnpm run lint && pnpm run typecheck && pnpm run test:run && pnpm run build"
+    "check": "vp check",
+    "test": "vp run -r test",
+    "build": "vp run -r build",
+    "bench": "vp run -r bench",
+    "ready": "vp check && vp run -r test && vp run -r build"
   },
-  "packageManager": "pnpm@10.28.0",
   "devDependencies": {
-    "@biomejs/biome": "^2.6.2",
-    "@types/node": "^26.6.5",
-    "@vitest/coverage-v8": "^5.0.5",
-    "publint": "^0.3.25",
-    "tinybench": "^6.2.2",
-    "tsdown": "^0.23.2",
-    "typescript": "^7.0.2",
-    "vitest": "^5.0.5"
+    "vite-plus": "catalog:"
   },
-  "publishConfig": {
-    "access": "public"
-  }
+  "engines": {
+    "node": ">=22.18.0"
+  },
+  "packageManager": "pnpm@10.28.0"
 }

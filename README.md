@@ -9,8 +9,8 @@ Composite keys · foreign keys · cascades · transactions · snapshots: typed e
 [![npm](https://img.shields.io/npm/v/@mvd/memrel?color=cb3837&logo=npm)](https://www.npmjs.com/package/@mvd/memrel)
 [![CI](https://github.com/meesvandongen/memrel/actions/workflows/ci.yml/badge.svg)](https://github.com/meesvandongen/memrel/actions/workflows/ci.yml)
 [![bundle size](https://img.shields.io/bundlejs/size/@mvd/memrel)](https://bundlejs.com/?q=@mvd/memrel)
-[![types](https://img.shields.io/npm/types/@mvd/memrel)](./src/types.ts)
-[![license](https://img.shields.io/npm/l/@mvd/memrel)](./LICENSE)
+[![types](https://img.shields.io/npm/types/@mvd/memrel)](https://github.com/meesvandongen/memrel/blob/main/packages/memrel/src/types.ts)
+[![license](https://img.shields.io/npm/l/@mvd/memrel)](https://github.com/meesvandongen/memrel/blob/main/LICENSE)
 
 </div>
 
@@ -357,15 +357,26 @@ plain code can't.**
 
 ## Development
 
+This repository is a pnpm workspace built on the [Vite+](https://viteplus.dev) toolchain: Oxfmt and Oxlint
+(with type-aware checks) through `vp check`, Vitest through `vp test`, and tsdown through `vp pack`.
+
+```
+.
+├── packages/memrel      the @mvd/memrel package: src, tests, benchmarks
+├── docs/design.md       the implementation design
+├── vite.config.ts       shared lint, format and task-runner config
+└── pnpm-workspace.yaml  workspace packages and the dependency catalog
+```
+
 ```sh
 pnpm install
-pnpm test        # vitest, runtime and type tests
-pnpm typecheck
-pnpm lint        # biome
-pnpm build       # tsdown
+pnpm check       # vp check: format, lint and type check
+pnpm test        # vp test in every package: runtime and type tests
+pnpm build       # vp pack in every package
 pnpm bench       # tinybench, 10k and 100k rows
+pnpm ready       # check, test and build, as CI runs them
 ```
 
 ## License
 
-[MIT](./LICENSE) © Mees van Dongen
+[MIT](https://github.com/meesvandongen/memrel/blob/main/LICENSE) © Mees van Dongen

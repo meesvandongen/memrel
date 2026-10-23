@@ -3,3 +3,7 @@ dist
 coverage
 *.log
 .DS_Store
+
+# Copied in from the repo root by `prepack`
+packages/memrel/README.md
+packages/memrel/LICENSE

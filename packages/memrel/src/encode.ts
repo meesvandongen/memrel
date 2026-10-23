@@ -65,11 +65,14 @@ export function displayKey(row: object, fields: readonly string[]): string {
 
 function displayValue(value: unknown): string {
   if (typeof value === 'bigint') return `${value}n`;
+  if (typeof value === 'symbol') return value.toString();
   if (value instanceof Date) return value.toISOString();
   if (value === undefined) return 'undefined';
   try {
-    return JSON.stringify(value) ?? String(value);
+    const json = JSON.stringify(value);
+    if (json !== undefined) return json;
   } catch {
-    return String(value);
+    // Cyclic or otherwise unserializable; fall through.
   }
+  return Object.prototype.toString.call(value);
 }

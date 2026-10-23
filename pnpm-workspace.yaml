@@ -1,0 +1,22 @@
+packages:
+  - packages/*
+
+catalogMode: prefer
+
+catalog:
+  '@types/node': ^24
+  publint: ^0.3.25
+  tinybench: ^6.2.2
+  typescript: ^7.0.2
+  vite: npm:@voidzero-dev/vite-plus-core@1.4.0
+  vite-plus: 1.4.0
+
+# vite-plus provides `vite` through its own core; point every `vite` at it and accept its 1.x version.
+overrides:
+  vite@*: 'catalog:'
+
+peerDependencyRules:
+  allowAny:
+    - vite
+  allowedVersions:
+    vite: '*'

@@ -1,18 +1,19 @@
-import { describe, expect, test } from 'vitest';
+import { describe, expect, test } from 'vite-plus/test';
 import { createDb, MemrelError } from '../src/index.ts';
 
 // Runtime validation catches what slips past the types, e.g. configs built from `any`.
 const define = createDb<any>() as (config: unknown) => unknown;
 
 function schemaError(config: unknown): string {
+  let error: unknown;
   try {
     define(config);
-  } catch (error) {
-    expect(error).toBeInstanceOf(MemrelError);
-    expect((error as MemrelError).code).toBe('INVALID_SCHEMA');
-    return (error as MemrelError).message;
+  } catch (e) {
+    error = e;
   }
-  throw new Error('expected an INVALID_SCHEMA error');
+  expect(error).toBeInstanceOf(MemrelError);
+  expect((error as MemrelError).code).toBe('INVALID_SCHEMA');
+  return (error as MemrelError).message;
 }
 
 describe('schema validation', () => {
