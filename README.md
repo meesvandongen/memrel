@@ -12,6 +12,8 @@ Composite keys · foreign keys · cascades · transactions · snapshots: typed e
 [![types](https://img.shields.io/npm/types/@mvd/memrel)](https://github.com/meesvandongen/memrel/blob/main/packages/memrel/src/types.ts)
 [![license](https://img.shields.io/npm/l/@mvd/memrel)](https://github.com/meesvandongen/memrel/blob/main/LICENSE)
 
+**[▶ Try it in the playground](https://meesvandongen.github.io/memrel/)**
+
 </div>
 
 ---
@@ -23,6 +25,8 @@ references, and deletes that cascade the way your real database does.
 
 It is **not an ORM**: there is no database underneath to map onto. Rows are plain objects, results are plain
 arrays, and every lookup is a `Map` hit.
+
+<a href="https://meesvandongen.github.io/memrel/"><img src="https://raw.githubusercontent.com/meesvandongen/memrel/main/docs/playground.png" alt="The memrel playground: deleting a user cascades through memberships and permissions, nulls a reviewer, and highlights every changed row" /></a>
 
 ```ts
 import { createDb } from '@mvd/memrel';
@@ -363,6 +367,7 @@ This repository is a pnpm workspace built on the [Vite+](https://viteplus.dev) t
 ```
 .
 ├── packages/memrel      the @mvd/memrel package: src, tests, benchmarks
+├── apps/playground      the interactive playground, deployed to GitHub Pages
 ├── docs/design.md       the implementation design
 ├── vite.config.ts       shared lint, format and task-runner config
 └── pnpm-workspace.yaml  workspace packages and the dependency catalog
@@ -370,6 +375,7 @@ This repository is a pnpm workspace built on the [Vite+](https://viteplus.dev) t
 
 ```sh
 pnpm install
+pnpm dev         # the playground, served from the library source
 pnpm check       # vp check: format, lint and type check
 pnpm test        # vp test in every package: runtime and type tests
 pnpm build       # vp pack in every package

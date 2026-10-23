@@ -1,0 +1,11 @@
+{
+  "extends": "../../tsconfig.base.json",
+  "compilerOptions": {
+    "lib": ["es2023", "dom", "dom.iterable"],
+    "types": ["node"],
+    "paths": {
+      "@mvd/memrel": ["../../packages/memrel/src/index.ts"]
+    }
+  },
+  "include": ["src", "vite.config.ts"]
+}
