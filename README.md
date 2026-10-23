@@ -390,8 +390,9 @@ pnpm changeset   # describe a change for the next release
 Releases are managed with [Changesets](https://github.com/changesets/changesets). Every pull request that changes
 `@mvd/memrel` adds a changeset (`pnpm changeset`) saying whether it is a patch, minor or major change and what
 changed. On `main`, the release workflow collects pending changesets into a "version packages" pull request that
-bumps the version and updates `CHANGELOG.md`. Merging that pull request publishes to npm with provenance, tags
-the release and creates a GitHub release.
+bumps the version and updates `CHANGELOG.md`. Merging that pull request publishes to npm, tags the release and
+creates a GitHub release. Publishing uses npm [trusted publishing](https://docs.npmjs.com/trusted-publishers)
+(OIDC), so there is no npm token, and every release carries provenance.
 
 ## License
 
