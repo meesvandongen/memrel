@@ -1,6 +1,6 @@
 {
   "name": "@mvd/memrel",
-  "version": "0.1.0",
+  "version": "0.0.0",
   "description": "A small, synchronous, in-memory relational store for typed mock data: composite keys, foreign keys, cascades, transactions and snapshots.",
   "keywords": [
     "database",
@@ -37,7 +37,8 @@
     "./package.json": "./package.json"
   },
   "publishConfig": {
-    "access": "public"
+    "access": "public",
+    "provenance": true
   },
   "scripts": {
     "build": "vp pack",

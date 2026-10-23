@@ -369,6 +369,7 @@ This repository is a pnpm workspace built on the [Vite+](https://viteplus.dev) t
 ├── packages/memrel      the @mvd/memrel package: src, tests, benchmarks
 ├── apps/playground      the interactive playground, deployed to GitHub Pages
 ├── docs/design.md       the implementation design
+├── .changeset/          pending release notes
 ├── vite.config.ts       shared lint, format and task-runner config
 └── pnpm-workspace.yaml  workspace packages and the dependency catalog
 ```
@@ -381,7 +382,16 @@ pnpm test        # vp test in every package: runtime and type tests
 pnpm build       # vp pack in every package
 pnpm bench       # tinybench, 10k and 100k rows
 pnpm ready       # check, test and build, as CI runs them
+pnpm changeset   # describe a change for the next release
 ```
+
+### Releasing
+
+Releases are managed with [Changesets](https://github.com/changesets/changesets). Every pull request that changes
+`@mvd/memrel` adds a changeset (`pnpm changeset`) saying whether it is a patch, minor or major change and what
+changed. On `main`, the release workflow collects pending changesets into a "version packages" pull request that
+bumps the version and updates `CHANGELOG.md`. Merging that pull request publishes to npm with provenance, tags
+the release and creates a GitHub release.
 
 ## License
 
