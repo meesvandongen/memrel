@@ -1,0 +1,27 @@
+name: Release
+
+on:
+  push:
+    branches: [main]
+
+concurrency: ${{ github.workflow }}-${{ github.ref }}
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write # commit version bumps, push tags, create releases
+      pull-requests: write # open the version pull request
+      id-token: write # npm trusted publishing (OIDC), which also adds provenance
+    steps:
+      - uses: actions/checkout@v4
+      - uses: voidzero-dev/setup-vp@v1.21.2
+        with:
+          node-version: '24' # ships npm >= 11.5.1, which trusted publishing needs
+          cache: true
+      - uses: changesets/action@v2.1.2
+        with:
+          version-script: pnpm version-packages
+          publish-script: pnpm release
+          commit-message: 'chore: version packages'
+          pr-title: 'chore: version packages'

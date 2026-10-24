@@ -186,7 +186,8 @@ app.append(
         h(
           'p',
           { class: 'globals' },
-          'In scope: ',
+          'Every scenario and table button shows its code here and runs it right away; ',
+          'edit the code and press Run to try your own. In scope: ',
           h('code', {}, 'db'),
           ', ',
           h('code', {}, 'log(...)'),
@@ -283,7 +284,7 @@ function selectScenario(scenario: Scenario | undefined, code?: string): void {
   $('#editor-title').textContent = scenario?.title ?? 'Your code';
   $('#editor-explain').innerHTML = scenario
     ? escapeHtml(scenario.explain).replace(/`([^`]+)`/g, '<code>$1</code>')
-    : 'Edit the code and run it. Changes show up in the tables.';
+    : 'Edit the code and press Run to try a variation. Changes show up in the tables.';
   for (const button of document.querySelectorAll<HTMLButtonElement>('.scenario')) {
     button.classList.toggle('active', button.dataset.id === scenario?.id);
   }
@@ -475,13 +476,82 @@ function appendSystem(title: string, d: Diff): void {
 // Tables
 // ---------------------------------------------------------------------------------------------
 
-const INSERT_TEMPLATES: Record<CollectionName, string> = {
-  user: `db.user.insert({ id: 'u6', email: 'fay@acme.dev', name: 'Fay' })`,
-  org: `db.org.insert({ id: 3, name: 'Initech' })`,
-  orgUser: `db.orgUser.insert({ orgId: 2, userId: 'u2', role: 'member' })`,
-  orgUserPermission: `db.orgUserPermission.insert({ memberOrgId: 2, memberUserId: 'u1', permission: 'deploy' })`,
-  post: `db.post.insert({ id: 'p6', authorId: 'u2', reviewerId: 'u1', title: 'A new post' })`,
-};
+/** The first `${prefix}${n}` not in `taken`. */
+function freeId(prefix: string, taken: Iterable<unknown>): string {
+  const used = new Set(taken);
+  let n = 1;
+  while (used.has(`${prefix}${n}`)) n++;
+  return `${prefix}${n}`;
+}
+
+/** Code inserting a row that fits the current data, so the "+ Insert" button keeps working. */
+function insertCode(name: CollectionName): string {
+  const users = db.user.where({});
+  switch (name) {
+    case 'user': {
+      const id = freeId(
+        'u',
+        users.map((u) => u.id),
+      );
+      const n = id.slice(1);
+      return `db.user.insert({ id: '${id}', email: 'user${n}@acme.dev', name: 'User ${n}' })`;
+    }
+    case 'org': {
+      const id = Math.max(0, ...db.org.where({}).map((o) => o.id)) + 1;
+      return `db.org.insert({ id: ${id}, name: 'Org ${id}' })`;
+    }
+    case 'orgUser': {
+      for (const org of db.org.where({})) {
+        for (const user of users) {
+          if (!db.orgUser.get({ orgId: org.id, userId: user.id })) {
+            return `db.orgUser.insert({ orgId: ${org.id}, userId: '${user.id}', role: 'member' })`;
+          }
+        }
+      }
+      return `db.orgUser.insert({ orgId: 1, userId: 'u1', role: 'member' })`;
+    }
+    case 'orgUserPermission': {
+      for (const m of db.orgUser.where({})) {
+        for (const permission of ['read', 'write', 'deploy', 'billing', 'admin']) {
+          const key = { memberOrgId: m.orgId, memberUserId: m.userId, permission };
+          if (!db.orgUserPermission.get(key)) {
+            return `db.orgUserPermission.insert(${objectLiteral(key, Object.keys(key))})`;
+          }
+        }
+      }
+      return `db.orgUserPermission.insert({ memberOrgId: 1, memberUserId: 'u1', permission: 'read' })`;
+    }
+    case 'post': {
+      const id = freeId(
+        'p',
+        db.post.where({}).map((p) => p.id),
+      );
+      const author = users[0]?.id ?? 'u1';
+      return `db.post.insert({ id: '${id}', authorId: '${author}', reviewerId: null, title: 'A new post' })`;
+    }
+  }
+}
+
+/** Code making a visible change to a row; for orgUserPermission that is a key change. */
+function updateCode(info: CollectionInfo, row: Row): string {
+  const key = objectLiteral(row, info.key);
+  let patch: string;
+  if (info.name === 'orgUser') {
+    patch = `{ role: '${row.role === 'admin' ? 'member' : 'admin'}' }`;
+  } else if (info.name === 'orgUserPermission') {
+    patch = `{ permission: ${literal(`${cellText(row.permission)}-v2`)} }`;
+  } else {
+    const field = info.name === 'post' ? 'title' : 'name';
+    patch = `{ ${field}: ${literal(`${cellText(row[field])} (edited)`)} }`;
+  }
+  return `db.${info.name}.update(${key}, ${patch})`;
+}
+
+/** Every button works the same way: its code goes into the editor and runs. */
+function runAction(code: string, title: string): void {
+  selectScenario(undefined, code);
+  execute(code, title);
+}
 
 function ruleBadge(kind: 'delete' | 'update', rule: string): HTMLElement {
   return h(
@@ -508,10 +578,7 @@ function renderTable(info: CollectionInfo): HTMLElement {
   const removed = lastDiff?.removed.get(info.name);
 
   const insert = h('button', { class: 'button small', type: 'button' }, '+ Insert');
-  insert.addEventListener('click', () => {
-    selectScenario(undefined, INSERT_TEMPLATES[info.name]);
-    editor.focus();
-  });
+  insert.addEventListener('click', () => runAction(insertCode(info.name), `Insert ${info.name}`));
 
   const head = h(
     'tr',
@@ -606,29 +673,22 @@ function renderRow(info: CollectionInfo, row: Row, state: string, old?: Row): HT
   const actions = h('td', { class: 'actions' });
   if (state !== 'removed') {
     const keyCode = objectLiteral(row, info.key);
-    const field = info.fields.find((f) => !info.key.includes(f) && !fkFor(info, f)) ?? info.key[0]!;
     const edit = h(
       'button',
       { class: 'icon-button', type: 'button', title: 'Update this row' },
       '✎',
     );
-    edit.addEventListener('click', () => {
-      selectScenario(
-        undefined,
-        `db.${info.name}.update(${keyCode}, { ${field}: ${literal(row[field])} })`,
-      );
-      editor.focus();
-    });
+    edit.addEventListener('click', () =>
+      runAction(updateCode(info, row), `Update ${info.name} ${k}`),
+    );
     const del = h(
       'button',
       { class: 'icon-button danger', type: 'button', title: 'Delete this row' },
       '✕',
     );
-    del.addEventListener('click', () => {
-      const code = `db.${info.name}.delete(${keyCode})`;
-      selectScenario(undefined, code);
-      execute(code, `Delete ${info.name} ${k}`);
-    });
+    del.addEventListener('click', () =>
+      runAction(`db.${info.name}.delete(${keyCode})`, `Delete ${info.name} ${k}`),
+    );
     actions.append(edit, del);
     tr.addEventListener('mouseenter', () => showRelated(info, row, tr));
     tr.addEventListener('mouseleave', clearRelated);
