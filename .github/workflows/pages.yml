@@ -19,11 +19,14 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - uses: voidzero-dev/setup-vp@v1.21.2
+      # pnpm comes from the packageManager field in package.json.
+      - run: corepack enable
+      - uses: actions/setup-node@v4
         with:
           node-version: '24'
-          cache: true
-      - run: vp run @mvd/memrel-playground#build
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm exec vp run @mvd/memrel-playground#build
       - uses: actions/configure-pages@v5
       - uses: actions/upload-pages-artifact@v3
         with:
