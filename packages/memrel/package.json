@@ -46,7 +46,7 @@
     "test:watch": "vp test watch",
     "coverage": "vp test run --coverage",
     "bench": "vpx bench/memrel.bench.ts",
-    "prepack": "cp ../../README.md ../../LICENSE ."
+    "prepack": "node -e \"for (const f of ['README.md', 'LICENSE']) require('node:fs').copyFileSync('../../' + f, f)\""
   },
   "devDependencies": {
     "@types/node": "catalog:",
