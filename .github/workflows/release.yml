@@ -15,7 +15,7 @@ jobs:
       id-token: write # npm trusted publishing (OIDC), which also adds provenance
     steps:
       - uses: actions/checkout@v4
-      - uses: voidzero-dev/setup-vp@v1.21.2
+      - uses: voidzero-dev/setup-vp@v1.22.0
         with:
           node-version: '24' # ships npm >= 11.5.1, which trusted publishing needs
           cache: true
