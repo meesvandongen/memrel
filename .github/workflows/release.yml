@@ -15,10 +15,14 @@ jobs:
       id-token: write # npm trusted publishing (OIDC), which also adds provenance
     steps:
       - uses: actions/checkout@v4
-      - uses: voidzero-dev/setup-vp@v1.21.2
+      # pnpm comes from the packageManager field in package.json. pnpm 12 needs a
+      # newer corepack than the one bundled with Node.
+      - run: npm install -g corepack@latest && corepack enable
+      - uses: actions/setup-node@v4
         with:
           node-version: '24' # ships npm >= 11.5.1, which trusted publishing needs
-          cache: true
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
       - uses: changesets/action@v2.1.2
         with:
           version-script: pnpm version-packages
