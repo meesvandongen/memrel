@@ -18,7 +18,7 @@ jobs:
       # pnpm comes from the packageManager field in package.json. pnpm 12 needs a
       # newer corepack than the one bundled with Node.
       - run: npm install -g corepack@latest && corepack enable
-      - uses: actions/setup-node@v4
+      - uses: actions/setup-node@v7
         with:
           node-version: '24' # ships npm >= 11.5.1, which trusted publishing needs
           cache: pnpm
