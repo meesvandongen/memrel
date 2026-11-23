@@ -12,7 +12,7 @@ catalog:
   tinybench: ^6.2.2
   typescript: ^7.0.2
   vite: npm:@voidzero-dev/vite-plus-core@1.6.0
-  vite-plus: 1.6.0
+  vite-plus: 1.7.0
 
 # vite-plus provides `vite` through its own core; point every `vite` at it and accept its 1.x version.
 overrides:
